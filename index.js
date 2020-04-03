@@ -98,6 +98,22 @@ async function getInteractedAddresses(token, tokenUniswapExchange) {
     return addresses;
 }
 
+// get address ETH balance
+async function getEthBalance(address) {
+    return web3.utils.fromWei(await web3.eth.getBalance(address), "ether");
+}
+
+// get ETH locked in protocol
+async function getEthLocked(oTokensAddresses) {
+    let totalEthLocked = 0;
+
+    for(let i=0; i<oTokensAddresses.length; i++) {
+        totalEthLocked += Number(await getEthBalance(oTokensAddresses[i]))
+    }
+
+    return totalEthLocked;
+}
+
 async function runKpi() {
     let ocDaiOld = await initContract(oTokenAbi, ocDaiOldAddress);
     let ocDai = await initContract(oTokenAbi, ocDaiAddress);
@@ -177,6 +193,8 @@ async function runKpi() {
     console.log("oEth042420 insurance coverage bought in $: ", oEth042420InsuranceBoughtDollar);
     console.log("oCrv insurance coverage bought in $: ", oCrvBought);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
+
+    console.log(await getEthLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oCrvAddress]));
 }
 
 // run
