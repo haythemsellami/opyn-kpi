@@ -6,6 +6,7 @@ const oTokenAbi = require('./ABI/oToken.json');
 const cDaiAbi = require('./ABI/cDai.json');
 const cUsdcAbi = require('./ABI/cUsdc.json');
 const MakerMedianizerAbi = require('./ABI/MakerMedianizer.json');
+const OptionsExchangeAbi = require('./ABI/OptionsExchange.json');
 
 // connect to Infura
 const rpcUrl = "https://mainnet.infura.io/v3/d70106f59aef456c9e5bfbb0c2cc7164";
@@ -22,6 +23,7 @@ const ocUsdcExchangeAddress = "0xE3A0a2431a093fed99037987eD0A88550e5E79AA";
 const oEth040320ExchangeAddress = "0x30651Fc7F912f5E40AB22F3D34C2159431Fb1c4F";
 const oEth042420ExchangeAddress = "0x5734a78b1985B47dF3fbf1736c278F57c2C30983";
 const makerMedianizerAddress = "0xE3774Af455602C5a0EACC1b0f93e3cE0f65236ce";
+const optionsExchangeAddress = "0x5778f2824a114F6115dc74d432685d3336216017";
 
 // init contract object
 async function initContract(abi, address) {
@@ -50,6 +52,40 @@ function calculateInsuranceInDollar(oTokensInsurance) {
         InsuranceBoughtDollar += oTokensInsurance[i];
     }
     return InsuranceBoughtDollar;
+}
+
+async function getNumberInteractedAddresses(token, tokenUniswapExchange) {
+    let addresses = [];
+    let numberOfInteraction = 0;
+
+    let transferEvent = await token.getPastEvents('Transfer', {
+        fromBlock: 0,
+        toBlock: 'latest'
+    });
+
+    for(let i=0; i<transferEvent.length; i++) {
+        if(
+            (transferEvent[i].returnValues.from != tokenUniswapExchange) 
+            && (transferEvent[i].returnValues.from != "0x0000000000000000000000000000000000000000")
+            && (!addresses.includes(transferEvent[i].returnValues.from))
+        ) {
+            console.log(transferEvent[i].returnValues.from);
+            addresses.push(transferEvent[i].returnValues.from);
+            numberOfInteraction++;
+        }
+
+        if(
+            (transferEvent[i].returnValues.to != tokenUniswapExchange) 
+            && (transferEvent[i].returnValues.to != "0x0000000000000000000000000000000000000000")
+            && (!addresses.includes(transferEvent[i].returnValues.to))
+        ) {
+            console.log(transferEvent[i].returnValues.to);
+            addresses.push(transferEvent[i].returnValues.to);
+            numberOfInteraction++;
+        }
+    }
+
+    return numberOfInteraction;
 }
 
 async function runKpi() {
