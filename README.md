@@ -20,6 +20,8 @@ $ node index.js -m eth-locked
 To get total token amount locked in protocol:
 ```
 $ node index.js -m token-locked -t tokenName
+
+# tokenName: usdc, dai
 ```
 e.g:
 ```
@@ -29,6 +31,8 @@ $ node index.js -m token-locked -t usdc
 To get addresses that interacted with a specific oToken (sent or received oToken)
 ```
 $ node index.js -m interacted-addresses -t oTokenName
+
+#oTokenName: old-ocdai, ocdai, ocusdc, oeth-040320, oeth-042420
 ```
 e.g:
 ```
