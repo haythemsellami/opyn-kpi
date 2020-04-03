@@ -2,7 +2,7 @@
 
 ## How To Run
 
-To install dependencies:
+Install dependencies:
 ```
 $ npm i
 ```
