@@ -29,9 +29,13 @@ const oCrvExchangeAddress = "0x21f5E9D4Ec20571402A5396084B1634314A68c97";
 
 const cDaiAddress = "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643";
 const cUsdcAddress = "0x39AA39c021dfbaE8faC545936693aC917d5E7563";
+const daiAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
+const usdcAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
 
 const makerMedianizerAddress = "0xE3774Af455602C5a0EACC1b0f93e3cE0f65236ce";
 const optionsExchangeAddress = "0x5778f2824a114F6115dc74d432685d3336216017";
+
+var argv = require('minimist')(process.argv.slice(2));
 
 // init contract object
 async function initContract(abi, address) {
@@ -69,7 +73,35 @@ function calculateInsuranceInDollar(oTokensInsurance) {
 
 // get list of unique addresses that interacted with a specific oToken (sent or received an oToken)
 // to get the number of addresses => addresses.length
-async function getInteractedAddresses(token, tokenUniswapExchange) {
+async function getInteractedAddresses(t) {
+    let token;
+    let tokenUniswapExchange;
+
+    switch(t) {
+        case 'old-ocdai':
+            token = await initContract(oTokenAbi, ocDaiOldAddress);
+            tokenUniswapExchange = ocDaiOldExchangeAddress;
+            break;
+        case 'ocdai':
+            token = await initContract(oTokenAbi, ocDaiAddress);
+            tokenUniswapExchange = ocDaiExchangeAddress;
+            break;
+        case 'ocusdc':
+            token = await initContract(oTokenAbi, ocUsdcAddress);
+            tokenUniswapExchange = ocUsdcExchangeAddress;
+            break;
+        case 'oeth-040320':
+            token = await initContract(oTokenAbi, oEth040320);
+            tokenUniswapExchange = oEth040320ExchangeAddress;
+            break;
+        case 'oeth-042420':
+            token = await initContract(oTokenAbi, oEth042420Address);
+            tokenUniswapExchange = oEth042420ExchangeAddress;
+            break;
+        default:
+            return;
+    }
+
     let addresses = [];
 
     let transferEvent = await token.getPastEvents('Transfer', {
@@ -95,7 +127,10 @@ async function getInteractedAddresses(token, tokenUniswapExchange) {
         }
     }
 
-    return addresses;
+    console.log("List of addresses:");
+    console.log(addresses);
+    console.log("Number of addresses:");
+    console.log(addresses.length);
 }
 
 // get address ETH balance
@@ -108,13 +143,43 @@ async function getEthLocked(oTokensAddresses) {
     let totalEthLocked = 0;
 
     for(let i=0; i<oTokensAddresses.length; i++) {
-        totalEthLocked += Number(await getEthBalance(oTokensAddresses[i]))
+        totalEthLocked += Number(await getEthBalance(oTokensAddresses[i]));
     }
 
-    return totalEthLocked;
+    console.log("ETH locked: ", totalEthLocked, "ETH");
 }
 
-async function runKpi() {
+// get token locked amount
+async function getTokenLocked(t, oTokensAddresses) {
+    let token;
+    let amountLocked = 0;
+    let symbol;
+    let decimals;
+
+    switch(t) {
+        case 'dai':
+            token = await initContract(cDaiAbi, daiAddress);
+            break;
+        case 'usdc':
+            token = await initContract(cDaiAbi, usdcAddress);
+            break;
+        default:
+            return;
+    }
+
+    symbol = await token.methods.symbol().call();
+    decimals = await token.methods.decimals().call();
+
+    for(let i=0; i<oTokensAddresses.length; i++) {
+        amountLocked += await token.methods.balanceOf(oTokensAddresses[i]).call() / 10**decimals;
+    }
+
+
+    console.log(symbol, "locked: ", amountLocked);
+}
+
+
+async function getTotalInsuranceCoverageDollar() {
     let ocDaiOld = await initContract(oTokenAbi, ocDaiOldAddress);
     let ocDai = await initContract(oTokenAbi, ocDaiAddress);
     let ocUsdc = await initContract(oTokenAbi, ocUsdcAddress);
@@ -193,9 +258,30 @@ async function runKpi() {
     console.log("oEth042420 insurance coverage bought in $: ", oEth042420InsuranceBoughtDollar);
     console.log("oCrv insurance coverage bought in $: ", oCrvBought);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
-
-    console.log(await getEthLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oCrvAddress]));
 }
 
+
+
 // run
+async function runKpi() {
+    switch(argv.m) {
+        case 'insurance-coverage':
+            getTotalInsuranceCoverageDollar();
+            break;
+        case 'eth-locked':
+            getEthLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oCrvAddress])  
+            break;
+        case 'token-locked':
+            getTokenLocked(argv.t, [ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oCrvAddress]);
+            break;
+        case 'interacted-addresses':
+            getInteractedAddresses(argv.t);
+            break;
+        default:
+            await getTotalInsuranceCoverageDollar();
+            //await getEthLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oCrvAddress])  
+    }
+      
+}
+
 runKpi();

@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "kpi": "node index.js"
   },
   "author": "Haythem Sellami",
   "license": "ISC",
   "dependencies": {
+    "minimist": "^1.2.5",
     "truffle-hdwallet-provider": "^1.0.17",
     "web3": "^1.2.6"
   }
