@@ -1,0 +1,15 @@
+{
+  "name": "opyn-kpi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "kpi": "node index.js"
+  },
+  "author": "Haythem Sellami",
+  "license": "ISC",
+  "dependencies": {
+    "truffle-hdwallet-provider": "^1.0.17",
+    "web3": "^1.2.6"
+  }
+}
