@@ -18,12 +18,14 @@ const ocDaiAddress = "0x98cc3bd6af1880fcfda17ac477b2f612980e5e33";
 const ocUsdcAddress = "0x8ED9f862363fFdFD3a07546e618214b6D59F03d4";
 const oEth040320Address = "0x48AB8A7d3Bf2EB942e153e4275Ae1a8988238dC7";
 const oEth042420Address = "0x6C79F10543C7886c6946B8A996F824E474bAC8f2";
+const oCrvAddress = "0x4ba8c6ce0e855c051e65dfc37883360efaf7c82b";
 
 const ocDaiOldExchangeAddress = "0x8a0976500EED661202810bAB030a057DF15c4CC9";
 const ocDaiExchangeAddress = "0xA6923533A6362008e9b536271C2Bdc0FF1467D3c";
 const ocUsdcExchangeAddress = "0xE3A0a2431a093fed99037987eD0A88550e5E79AA";
 const oEth040320ExchangeAddress = "0x30651Fc7F912f5E40AB22F3D34C2159431Fb1c4F";
 const oEth042420ExchangeAddress = "0x5734a78b1985B47dF3fbf1736c278F57c2C30983";
+const oCrvExchangeAddress = "0x21f5E9D4Ec20571402A5396084B1634314A68c97";
 
 const cDaiAddress = "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643";
 const cUsdcAddress = "0x39AA39c021dfbaE8faC545936693aC917d5E7563";
@@ -102,6 +104,7 @@ async function runKpi() {
     let ocUsdc = await initContract(oTokenAbi, ocUsdcAddress);
     let oEth040320 = await initContract(oTokenAbi, oEth040320Address);
     let oEth042420 = await initContract(oTokenAbi, oEth042420Address);
+    let oCrv = await initContract(oTokenAbi, oCrvAddress);
     let cDai = await initContract(cDaiAbi, cDaiAddress);
     let cUsdc = await initContract(cUsdcAbi, cUsdcAddress);
     let makerMedianizer = await initContract(MakerMedianizerAbi, makerMedianizerAddress);
@@ -136,11 +139,18 @@ async function runKpi() {
     let oEth042420Balance1 = await getBalance(oEth042420, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oEth042420Decimals;
     let oEth042420Balance2 = await getBalance(oEth042420, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oEth042420Decimals;
 
+    let oCrvDecimals = await getDecimals(oCrv);
+    let ocCrvTotalSupply = await getTotalSupply(oCrv) / 10**oCrvDecimals;
+    let oCrvUniswapBalance = await getBalance(oCrv, oCrvExchangeAddress) / 10**oCrvDecimals;
+    let oCrvBalance1 = await getBalance(oCrv, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oCrvDecimals;
+    let oCrvBalance2 = await getBalance(oCrv, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oCrvDecimals;
+
     let ocDaiOldBought = calculateInsuranceBought(ocDaiOldTotalSupply, ocDaiOldUniswapBalance, ocDaiOldBalance1, ocDaiOldBalance2);
     let ocDaiBought = calculateInsuranceBought(ocDaiTotalSupply, ocDaiUniswapBalance, ocDaiBalance1, ocDaiBalance2);
     let ocUsdcBought = calculateInsuranceBought(ocUsdcTotalSupply, ocUsdcUniswapBalance, ocUsdcBalance1, ocUsdcBalance2);
     let oEth040320Bought = calculateInsuranceBought(oEth040320TotalSupply, oEth040320UniswapBalance, oEth040320Balance1, oEth040320Balance2);
     let oEth042420Bought = calculateInsuranceBought(oEth042420TotalSupply, oEth042420UniswapBalance, oEth042420Balance1, oEth042420Balance2);
+    let oCrvBought = calculateInsuranceBought(ocCrvTotalSupply, oCrvUniswapBalance, oCrvBalance1, oCrvBalance2);
 
     let cDaiToDai = await cDai.methods.exchangeRateCurrent().call() / 1e18;
     let cUsdcToUsdc = await cUsdc.methods.exchangeRateCurrent().call() / 1e18;
@@ -165,6 +175,7 @@ async function runKpi() {
     console.log("ocUsdc insurance coverage bought in $: ", ocUsdcInsuranceBoughtDollar);
     console.log("oEth040320 insurance coverage bought in $: ", oEth040320InsuranceBoughtDollar);
     console.log("oEth042420 insurance coverage bought in $: ", oEth042420InsuranceBoughtDollar);
+    console.log("oCrv insurance coverage bought in $: ", oCrvBought);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
 }
 
