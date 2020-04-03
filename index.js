@@ -13,8 +13,6 @@ const rpcUrl = "https://mainnet.infura.io/v3/d70106f59aef456c9e5bfbb0c2cc7164";
 const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
 
 // needed addresses
-const cDaiAddress = "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643";
-const cUsdcAddress = "0x39AA39c021dfbaE8faC545936693aC917d5E7563";
 const ocDaiOldAddress = "0xddac4aed7c8f73032b388efe2c778fc194bc81ed";
 const ocDaiAddress = "0x98cc3bd6af1880fcfda17ac477b2f612980e5e33";
 const ocUsdcAddress = "0x8ED9f862363fFdFD3a07546e618214b6D59F03d4";
@@ -26,6 +24,9 @@ const ocDaiExchangeAddress = "0xA6923533A6362008e9b536271C2Bdc0FF1467D3c";
 const ocUsdcExchangeAddress = "0xE3A0a2431a093fed99037987eD0A88550e5E79AA";
 const oEth040320ExchangeAddress = "0x30651Fc7F912f5E40AB22F3D34C2159431Fb1c4F";
 const oEth042420ExchangeAddress = "0x5734a78b1985B47dF3fbf1736c278F57c2C30983";
+
+const cDaiAddress = "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643";
+const cUsdcAddress = "0x39AA39c021dfbaE8faC545936693aC917d5E7563";
 
 const makerMedianizerAddress = "0xE3774Af455602C5a0EACC1b0f93e3cE0f65236ce";
 const optionsExchangeAddress = "0x5778f2824a114F6115dc74d432685d3336216017";
@@ -59,10 +60,10 @@ function calculateInsuranceInDollar(oTokensInsurance) {
     return InsuranceBoughtDollar;
 }
 
-// calculate number of unique addresses that interacted with a specific oToken (sent or received an oToken)
-async function getNumberInteractedAddresses(token, tokenUniswapExchange) {
+// get list of unique addresses that interacted with a specific oToken (sent or received an oToken)
+// to get the number of addresses => addresses.length
+async function getInteractedAddresses(token, tokenUniswapExchange) {
     let addresses = [];
-    let numberOfInteraction = 0;
 
     let transferEvent = await token.getPastEvents('Transfer', {
         fromBlock: 0,
@@ -75,9 +76,7 @@ async function getNumberInteractedAddresses(token, tokenUniswapExchange) {
             && (transferEvent[i].returnValues.from != "0x0000000000000000000000000000000000000000")
             && (!addresses.includes(transferEvent[i].returnValues.from))
         ) {
-            console.log(transferEvent[i].returnValues.from);
             addresses.push(transferEvent[i].returnValues.from);
-            numberOfInteraction++;
         }
 
         if(
@@ -85,13 +84,11 @@ async function getNumberInteractedAddresses(token, tokenUniswapExchange) {
             && (transferEvent[i].returnValues.to != "0x0000000000000000000000000000000000000000")
             && (!addresses.includes(transferEvent[i].returnValues.to))
         ) {
-            console.log(transferEvent[i].returnValues.to);
             addresses.push(transferEvent[i].returnValues.to);
-            numberOfInteraction++;
         }
     }
 
-    return numberOfInteraction;
+    return addresses;
 }
 
 async function runKpi() {
@@ -184,6 +181,15 @@ async function runKpi() {
     console.log("oEth040320 insurance coverage bought in $: ", oEth040320InsuranceBoughtDollar);
     console.log("oEth042420 insurance coverage bought in $: ", oEth042420InsuranceBoughtDollar);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
+
+    let nocDaiOld = await getInteractedAddresses(ocDaiOld, ocDaiOldExchangeAddress);
+    let nocDai = await getInteractedAddresses(ocDai, ocDaiExchangeAddress);
+    let nocUsdc = await getInteractedAddresses(ocUsdc, ocUsdcExchangeAddress);
+    let noEth040320 = await getInteractedAddresses(oEth040320, oEth040320ExchangeAddress);
+    let noEth042420 = await getInteractedAddresses(oEth042420, oEth042420ExchangeAddress);
+
+    console.log("Number of unique addresses that interacted with:");
+    console.log("Old_ocDai:",nocDaiOld.length, "ocDai:",nocDai.length, "ocUsdc:",nocUsdc.length, "oEth040320:",noEth040320.length, "oEth042420:",noEth042420.length);
 }
 
 // run
