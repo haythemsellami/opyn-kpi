@@ -6,6 +6,7 @@ const oTokenAbi = require('./ABI/oToken.json');
 const cDaiAbi = require('./ABI/cDai.json');
 const cUsdcAbi = require('./ABI/cUsdc.json');
 const MakerMedianizerAbi = require('./ABI/MakerMedianizer.json');
+const CurvefiSwapAbi = require('./ABI/CurvefiSwap.json');
 const OptionsExchangeAbi = require('./ABI/OptionsExchange.json');
 
 // connect to Infura
@@ -26,6 +27,7 @@ const ocUsdcExchangeAddress = "0xE3A0a2431a093fed99037987eD0A88550e5E79AA";
 const oEth040320ExchangeAddress = "0x30651Fc7F912f5E40AB22F3D34C2159431Fb1c4F";
 const oEth042420ExchangeAddress = "0x5734a78b1985B47dF3fbf1736c278F57c2C30983";
 const oCrvExchangeAddress = "0x21f5E9D4Ec20571402A5396084B1634314A68c97";
+const curvefiSwapAddress = "0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51";
 
 const cDaiAddress = "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643";
 const cUsdcAddress = "0x39AA39c021dfbaE8faC545936693aC917d5E7563";
@@ -189,6 +191,7 @@ async function getTotalInsuranceCoverageDollar() {
     let cDai = await initContract(cDaiAbi, cDaiAddress);
     let cUsdc = await initContract(cUsdcAbi, cUsdcAddress);
     let makerMedianizer = await initContract(MakerMedianizerAbi, makerMedianizerAddress);
+    let curvefiSwap = await initContract(CurvefiSwapAbi, curvefiSwapAddress);
 
     let ocDaiOldDecimals = await getDecimals(ocDaiOld);
     let ocDaiOldTotalSupply = await getTotalSupply(ocDaiOld) / 10**ocDaiOldDecimals;
@@ -236,19 +239,22 @@ async function getTotalInsuranceCoverageDollar() {
     let cDaiToDai = await cDai.methods.exchangeRateCurrent().call() / 1e18;
     let cUsdcToUsdc = await cUsdc.methods.exchangeRateCurrent().call() / 1e18;
     let ethToUsd = web3.utils.hexToNumberString(await makerMedianizer.methods.read().call());
+    let yTokenToUsd = await curvefiSwap.methods.get_virtual_price().call() / 1e18;
 
     let ocDaiOldInsuranceBoughtDollar = ocDaiOldBought * cDaiToDai;
     let ocDaiInsuranceBoughtDollar = ocDaiBought  * cDaiToDai;
     let ocUsdcInsuranceBoughtDollar = ocUsdcBought * cUsdcToUsdc;
     let oEth040320InsuranceBoughtDollar = oEth040320Bought * ethToUsd / 1e18;
     let oEth042420InsuranceBoughtDollar = oEth042420Bought * ethToUsd / 1e18;
+    let oCrvInsuranceBoughtDollar = oCrvBought * yTokenToUsd;
 
     let oTokensInsuranceBoughtDollar = calculateInsuranceInDollar([
         ocDaiOldInsuranceBoughtDollar,
         ocDaiInsuranceBoughtDollar,
         ocUsdcInsuranceBoughtDollar,
         oEth040320InsuranceBoughtDollar,
-        oEth042420InsuranceBoughtDollar
+        oEth042420InsuranceBoughtDollar,
+        oCrvInsuranceBoughtDollar
     ]);
 
     console.log("ocDaiOld insurance coverage bought in $: ", ocDaiOldInsuranceBoughtDollar);
@@ -256,7 +262,7 @@ async function getTotalInsuranceCoverageDollar() {
     console.log("ocUsdc insurance coverage bought in $: ", ocUsdcInsuranceBoughtDollar);
     console.log("oEth040320 insurance coverage bought in $: ", oEth040320InsuranceBoughtDollar);
     console.log("oEth042420 insurance coverage bought in $: ", oEth042420InsuranceBoughtDollar);
-    console.log("oCrv insurance coverage bought in $: ", oCrvBought);
+    console.log("oCrv insurance coverage bought in $: ", oCrvInsuranceBoughtDollar);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
 }
 
