@@ -46,6 +46,11 @@ async function getBalance(token, holder) {
     return await token.methods.balanceOf(holder).call();
 }
 
+// get token decimals
+async function getDecimals(token) {
+    return await token.methods.decimals().call();
+}
+
 // calculate oToken bought
 function calculateInsuranceBought(totalSupply, uniswapBalance, balance1, balance2) {
     return totalSupply - uniswapBalance - balance1 - balance2;
@@ -101,30 +106,35 @@ async function runKpi() {
     let cUsdc = await initContract(cUsdcAbi, cUsdcAddress);
     let makerMedianizer = await initContract(MakerMedianizerAbi, makerMedianizerAddress);
 
-    let ocDaiOldTotalSupply = await getTotalSupply(ocDaiOld);
-    let ocDaiOldUniswapBalance = await getBalance(ocDaiOld, ocDaiOldExchangeAddress);
-    let ocDaiOldBalance1 = await getBalance(ocDaiOld, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84");
-    let ocDaiOldBalance2 = await getBalance(ocDaiOld, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4");    
+    let ocDaiOldDecimals = await getDecimals(ocDaiOld);
+    let ocDaiOldTotalSupply = await getTotalSupply(ocDaiOld) / 10**ocDaiOldDecimals;
+    let ocDaiOldUniswapBalance = await getBalance(ocDaiOld, ocDaiOldExchangeAddress) / 10**ocDaiOldDecimals;
+    let ocDaiOldBalance1 = await getBalance(ocDaiOld, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**ocDaiOldDecimals;
+    let ocDaiOldBalance2 = await getBalance(ocDaiOld, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**ocDaiOldDecimals;
 
-    let ocDaiTotalSupply = await getTotalSupply(ocDai);
-    let ocDaiUniswapBalance = await getBalance(ocDai, ocDaiExchangeAddress);
-    let ocDaiBalance1 = await getBalance(ocDai, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84");
-    let ocDaiBalance2 = await getBalance(ocDai, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4");
+    let ocDaiDecimals = await getDecimals(ocDai);
+    let ocDaiTotalSupply = await getTotalSupply(ocDai) / 10**ocDaiDecimals;
+    let ocDaiUniswapBalance = await getBalance(ocDai, ocDaiExchangeAddress) / 10**ocDaiDecimals;
+    let ocDaiBalance1 = await getBalance(ocDai, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**ocDaiDecimals;
+    let ocDaiBalance2 = await getBalance(ocDai, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**ocDaiDecimals;
 
-    let ocUsdcTotalSupply = await getTotalSupply(ocUsdc);
-    let ocUsdcUniswapBalance = await getBalance(ocUsdc, ocUsdcExchangeAddress);
-    let ocUsdcBalance1 = await getBalance(ocUsdc, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84");
-    let ocUsdcBalance2 = await getBalance(ocUsdc, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4");
+    let ocUsdcDecimals = await getDecimals(ocUsdc);
+    let ocUsdcTotalSupply = await getTotalSupply(ocUsdc) / 10**ocUsdcDecimals;
+    let ocUsdcUniswapBalance = await getBalance(ocUsdc, ocUsdcExchangeAddress) / 10**ocUsdcDecimals;
+    let ocUsdcBalance1 = await getBalance(ocUsdc, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**ocUsdcDecimals;
+    let ocUsdcBalance2 = await getBalance(ocUsdc, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**ocUsdcDecimals;
 
-    let oEth040320TotalSupply = await getTotalSupply(oEth040320);
-    let oEth040320UniswapBalance = await getBalance(oEth040320, oEth040320ExchangeAddress);
-    let oEth040320Balance1 = await getBalance(oEth040320, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84");
-    let oEth040320Balance2 = await getBalance(oEth040320, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4");
+    let oEth040320Decimals = await getDecimals(oEth040320);
+    let oEth040320TotalSupply = await getTotalSupply(oEth040320) / 10**oEth040320Decimals;
+    let oEth040320UniswapBalance = await getBalance(oEth040320, oEth040320ExchangeAddress) / 10**oEth040320Decimals;
+    let oEth040320Balance1 = await getBalance(oEth040320, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oEth040320Decimals;
+    let oEth040320Balance2 = await getBalance(oEth040320, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oEth040320Decimals;
 
-    let oEth042420TotalSupply = await getTotalSupply(oEth042420);
-    let oEth042420UniswapBalance = await getBalance(oEth042420, oEth042420ExchangeAddress);
-    let oEth042420Balance1 = await getBalance(oEth042420, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84");
-    let oEth042420Balance2 = await getBalance(oEth042420, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4");
+    let oEth042420Decimals = await getDecimals(oEth042420);
+    let oEth042420TotalSupply = await getTotalSupply(oEth042420) / 10**oEth042420Decimals;
+    let oEth042420UniswapBalance = await getBalance(oEth042420, oEth042420ExchangeAddress) / 10**oEth042420Decimals;
+    let oEth042420Balance1 = await getBalance(oEth042420, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oEth042420Decimals;
+    let oEth042420Balance2 = await getBalance(oEth042420, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oEth042420Decimals;
 
     let ocDaiOldBought = calculateInsuranceBought(ocDaiOldTotalSupply, ocDaiOldUniswapBalance, ocDaiOldBalance1, ocDaiOldBalance2);
     let ocDaiBought = calculateInsuranceBought(ocDaiTotalSupply, ocDaiUniswapBalance, ocDaiBalance1, ocDaiBalance2);
@@ -136,9 +146,9 @@ async function runKpi() {
     let cUsdcToUsdc = await cUsdc.methods.exchangeRateCurrent().call() / 1e18;
     let ethToUsd = web3.utils.hexToNumberString(await makerMedianizer.methods.read().call());
 
-    let ocDaiOldInsuranceBoughtDollar = ocDaiOldBought / 1e8 * cDaiToDai;
-    let ocDaiInsuranceBoughtDollar = ocDaiBought / 1e8 * cDaiToDai;
-    let ocUsdcInsuranceBoughtDollar = ocUsdcBought / 1e8 * cUsdcToUsdc;
+    let ocDaiOldInsuranceBoughtDollar = ocDaiOldBought * cDaiToDai;
+    let ocDaiInsuranceBoughtDollar = ocDaiBought  * cDaiToDai;
+    let ocUsdcInsuranceBoughtDollar = ocUsdcBought * cUsdcToUsdc;
     let oEth040320InsuranceBoughtDollar = oEth040320Bought * ethToUsd / 1e18;
     let oEth042420InsuranceBoughtDollar = oEth042420Bought * ethToUsd / 1e18;
 
@@ -150,46 +160,12 @@ async function runKpi() {
         oEth042420InsuranceBoughtDollar
     ]);
 
-    console.log("ocDaiOld total supply: ", ocDaiOldTotalSupply);
-    console.log("ocDaiOld Uniswap pool balance: ", ocDaiOldUniswapBalance);
-    console.log("ocDaiOld bought: ", ocDaiOldBought);
-    console.log("ocDaiOld to DAI exchange rate: ", cDaiToDai);
-
-    console.log("ocDai total supply: ", ocDaiTotalSupply);
-    console.log("ocDai Uniswap pool balance: ", ocDaiUniswapBalance);
-    console.log("ocDai bought: ", ocDaiBought);
-    console.log("cDAI to DAI exchange rate: ", cDaiToDai);
-
-    console.log("ocUsdc total supply: ", ocUsdcTotalSupply);
-    console.log("ocUsdc Uniswap pool balance: ", ocUsdcUniswapBalance);
-    console.log("ocUsdc bought: ", ocUsdcBought);
-    console.log("cUSDC to USDC exchange rate: ", cUsdcToUsdc);
-
-    console.log("oEth040320 total supply: ", oEth040320TotalSupply);
-    console.log("oEth040320 Uniswap pool balance: ", oEth040320UniswapBalance);
-    console.log("oEth040320 bought: ", oEth040320Bought);
-    console.log("Eth to USD exchange rate: ", ethToUsd / 1e18);
-
-    console.log("oEth042420 total supply: ", oEth042420TotalSupply);
-    console.log("oEth042420 Uniswap pool balance: ", oEth042420UniswapBalance);
-    console.log("oEth042420 bought: ", oEth042420Bought);
-    console.log("Eth to USD exchange rate: ", ethToUsd / 1e18);
-
     console.log("ocDaiOld insurance coverage bought in $: ", ocDaiOldInsuranceBoughtDollar);
     console.log("ocDai insurance coverage bought in $: ", ocDaiInsuranceBoughtDollar);
     console.log("ocUsdc insurance coverage bought in $: ", ocUsdcInsuranceBoughtDollar);
     console.log("oEth040320 insurance coverage bought in $: ", oEth040320InsuranceBoughtDollar);
     console.log("oEth042420 insurance coverage bought in $: ", oEth042420InsuranceBoughtDollar);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
-
-    let nocDaiOld = await getInteractedAddresses(ocDaiOld, ocDaiOldExchangeAddress);
-    let nocDai = await getInteractedAddresses(ocDai, ocDaiExchangeAddress);
-    let nocUsdc = await getInteractedAddresses(ocUsdc, ocUsdcExchangeAddress);
-    let noEth040320 = await getInteractedAddresses(oEth040320, oEth040320ExchangeAddress);
-    let noEth042420 = await getInteractedAddresses(oEth042420, oEth042420ExchangeAddress);
-
-    console.log("Number of unique addresses that interacted with:");
-    console.log("Old_ocDai:",nocDaiOld.length, "ocDai:",nocDai.length, "ocUsdc:",nocUsdc.length, "oEth040320:",noEth040320.length, "oEth042420:",noEth042420.length);
 }
 
 // run
