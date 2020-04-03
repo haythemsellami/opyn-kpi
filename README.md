@@ -32,7 +32,7 @@ To get addresses that interacted with a specific oToken (sent or received oToken
 ```bash
 $ node index.js -m interacted-addresses -t oTokenName
 
-#oTokenName: old-ocdai, ocdai, ocusdc, oeth-040320, oeth-042420
+# oTokenName: old-ocdai, ocdai, ocusdc, oeth-040320, oeth-042420
 ```
 e.g:
 ```
