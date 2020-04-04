@@ -236,8 +236,8 @@ async function getTotalInsuranceCoverageDollar() {
     let oEth042420Bought = calculateInsuranceBought(oEth042420TotalSupply, oEth042420UniswapBalance, oEth042420Balance1, oEth042420Balance2);
     let oCrvBought = calculateInsuranceBought(ocCrvTotalSupply, oCrvUniswapBalance, oCrvBalance1, oCrvBalance2);
 
-    let cDaiToDai = await cDai.methods.exchangeRateCurrent().call() / 1e18;
-    let cUsdcToUsdc = await cUsdc.methods.exchangeRateCurrent().call() / 1e18;
+    let cDaiToDai = await cDai.methods.exchangeRateStored().call() / 1e28;
+    let cUsdcToUsdc = await cUsdc.methods.exchangeRateStored().call() / 1e16;
     let ethToUsd = web3.utils.hexToNumberString(await makerMedianizer.methods.read().call());
     let yTokenToUsd = await curvefiSwap.methods.get_virtual_price().call() / 1e18;
 
