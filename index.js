@@ -93,7 +93,7 @@ async function getInteractedAddresses(t) {
             tokenUniswapExchange = ocUsdcExchangeAddress;
             break;
         case 'oeth-040320':
-            token = await initContract(oTokenAbi, oEth040320);
+            token = await initContract(oTokenAbi, oEth040320Address);
             tokenUniswapExchange = oEth040320ExchangeAddress;
             break;
         case 'oeth-042420':
@@ -256,6 +256,9 @@ async function getTotalInsuranceCoverageDollar() {
         oEth042420InsuranceBoughtDollar,
         oCrvInsuranceBoughtDollar
     ]);
+
+    console.log(cDaiToDai);
+    console.log(cUsdcToUsdc);
 
     console.log("ocDaiOld insurance coverage bought in $: ", ocDaiOldInsuranceBoughtDollar);
     console.log("ocDai insurance coverage bought in $: ", ocDaiInsuranceBoughtDollar);
