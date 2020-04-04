@@ -202,15 +202,15 @@ async function getTokenLocked(t, oTokensAddresses) {
 
 // get total locked in protocol
 async function getTotalDollarLocked(oTokensAddresses) {
-    // get USDC locked
-    let totalUsdcLocked = await getTokenLocked('usdc', oTokensAddresses);
-
     // get ETH locked in $
     let totalEthLocked = await getEthLocked(oTokensAddresses);
     let makerMedianizer = await initContract(MakerMedianizerAbi, makerMedianizerAddress);
     let ethToUsd = web3.utils.hexToNumberString(await makerMedianizer.methods.read().call());
     let totalEthLockedDollar = totalEthLocked * ethToUsd / 1e18;
-    console.log("Total ETH locked in USD:", totalEthLockedDollar);
+    console.log("ETH locked in USD:", totalEthLockedDollar);
+
+    // get USDC locked
+    let totalUsdcLocked = await getTokenLocked('usdc', oTokensAddresses);
     
     // get total locked in $
     let totalLockedDollar = totalEthLockedDollar+totalUsdcLocked;
