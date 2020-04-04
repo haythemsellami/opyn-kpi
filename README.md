@@ -12,6 +12,11 @@ To get total insurance coverage in dollar:
 $ node index.js -m insurance-coverage
 ```
 
+To get total USD locked in protocol:
+```
+$ node index.js -m usd-locked
+```
+
 To get total ETH locked in protocol:
 ```
 $ node index.js -m eth-locked
@@ -27,12 +32,16 @@ e.g:
 ```
 $ node index.js -m token-locked -t usdc
 ```
+To get unique addresses that interacted with all oTokens (sent or received any oToken)
+```bash
+$ node index.js -m interacted-addresses
+```
 
-To get addresses that interacted with a specific oToken (sent or received oToken)
+To get unique addresses that interacted with a specific oToken (sent or received oToken)
 ```bash
 $ node index.js -m interacted-addresses -t oTokenName
 
-# oTokenName: old-ocdai, ocdai, ocusdc, oeth-040320, oeth-042420
+# oTokenName: ocrv, old-ocdai, ocdai, ocusdc, oeth-040320, oeth-042420
 ```
 e.g:
 ```

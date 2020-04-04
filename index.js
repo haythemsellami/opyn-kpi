@@ -76,56 +76,73 @@ function calculateInsuranceInDollar(oTokensInsurance) {
 // get list of unique addresses that interacted with a specific oToken (sent or received an oToken)
 // to get the number of addresses => addresses.length
 async function getInteractedAddresses(t) {
-    let token;
-    let tokenUniswapExchange;
+    let token = [];
+    let tokenUniswapExchange = [];
 
     switch(t) {
         case 'old-ocdai':
-            token = await initContract(oTokenAbi, ocDaiOldAddress);
-            tokenUniswapExchange = ocDaiOldExchangeAddress;
+            token.push(await initContract(oTokenAbi, ocDaiOldAddress));
+            tokenUniswapExchange.push(ocDaiOldExchangeAddress);
+            break;
+        case 'ocrv':
+            token.push(await initContract(oTokenAbi, oCrvAddress));
+            tokenUniswapExchange.push(oCrvExchangeAddress);
             break;
         case 'ocdai':
-            token = await initContract(oTokenAbi, ocDaiAddress);
-            tokenUniswapExchange = ocDaiExchangeAddress;
+            token.push(await initContract(oTokenAbi, ocDaiAddress));
+            tokenUniswapExchange.push(ocDaiExchangeAddress);
             break;
         case 'ocusdc':
-            token = await initContract(oTokenAbi, ocUsdcAddress);
-            tokenUniswapExchange = ocUsdcExchangeAddress;
+            token.push(await initContract(oTokenAbi, ocUsdcAddress));
+            tokenUniswapExchange.push(ocUsdcExchangeAddress);
             break;
         case 'oeth-040320':
-            token = await initContract(oTokenAbi, oEth040320Address);
-            tokenUniswapExchange = oEth040320ExchangeAddress;
+            token.push(await initContract(oTokenAbi, oEth040320Address));
+            tokenUniswapExchange.push(oEth040320ExchangeAddress);
             break;
         case 'oeth-042420':
-            token = await initContract(oTokenAbi, oEth042420Address);
-            tokenUniswapExchange = oEth042420ExchangeAddress;
+            token.push(await initContract(oTokenAbi, oEth042420Address));
+            tokenUniswapExchange.push(oEth042420ExchangeAddress);
             break;
         default:
-            return;
+            token.push(await initContract(oTokenAbi, ocDaiOldAddress));
+            tokenUniswapExchange.push(ocDaiOldExchangeAddress);
+            token.push(await initContract(oTokenAbi, oCrvAddress));
+            tokenUniswapExchange.push(oCrvExchangeAddress);
+            token.push(await initContract(oTokenAbi, ocDaiAddress));
+            tokenUniswapExchange.push(ocDaiExchangeAddress);
+            token.push(await initContract(oTokenAbi, ocUsdcAddress));
+            tokenUniswapExchange.push(ocUsdcExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth040320Address));
+            tokenUniswapExchange.push(oEth040320ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth042420Address));
+            tokenUniswapExchange.push(oEth042420ExchangeAddress);
     }
 
     let addresses = [];
 
-    let transferEvent = await token.getPastEvents('Transfer', {
-        fromBlock: 0,
-        toBlock: 'latest'
-    });
-
-    for(let i=0; i<transferEvent.length; i++) {
-        if(
-            (transferEvent[i].returnValues.from != tokenUniswapExchange) 
-            && (transferEvent[i].returnValues.from != "0x0000000000000000000000000000000000000000")
-            && (!addresses.includes(transferEvent[i].returnValues.from))
-        ) {
-            addresses.push(transferEvent[i].returnValues.from);
-        }
-
-        if(
-            (transferEvent[i].returnValues.to != tokenUniswapExchange) 
-            && (transferEvent[i].returnValues.to != "0x0000000000000000000000000000000000000000")
-            && (!addresses.includes(transferEvent[i].returnValues.to))
-        ) {
-            addresses.push(transferEvent[i].returnValues.to);
+    for(let j=0; j<token.length; j++) {
+        let transferEvent = await token[j].getPastEvents('Transfer', {
+            fromBlock: 0,
+            toBlock: 'latest'
+        });
+    
+        for(let i=0; i<transferEvent.length; i++) {
+            if(
+                (transferEvent[i].returnValues.from != tokenUniswapExchange[j]) 
+                && (transferEvent[i].returnValues.from != "0x0000000000000000000000000000000000000000")
+                && (!addresses.includes(transferEvent[i].returnValues.from))
+            ) {
+                addresses.push(transferEvent[i].returnValues.from);
+            }
+    
+            if(
+                (transferEvent[i].returnValues.to != tokenUniswapExchange[j]) 
+                && (transferEvent[i].returnValues.to != "0x0000000000000000000000000000000000000000")
+                && (!addresses.includes(transferEvent[i].returnValues.to))
+            ) {
+                addresses.push(transferEvent[i].returnValues.to);
+            }
         }
     }
 
@@ -149,6 +166,8 @@ async function getEthLocked(oTokensAddresses) {
     }
 
     console.log("ETH locked: ", totalEthLocked, "ETH");
+
+    return totalEthLocked;
 }
 
 // get token locked amount
@@ -176,10 +195,27 @@ async function getTokenLocked(t, oTokensAddresses) {
         amountLocked += await token.methods.balanceOf(oTokensAddresses[i]).call() / 10**decimals;
     }
 
-
     console.log(symbol, "locked: ", amountLocked);
+
+    return amountLocked;
 }
 
+// get total locked in protocol
+async function getTotalDollarLocked(oTokensAddresses) {
+    // get USDC locked
+    let totalUsdcLocked = await getTokenLocked('usdc', oTokensAddresses);
+
+    // get ETH locked in $
+    let totalEthLocked = await getEthLocked(oTokensAddresses);
+    let makerMedianizer = await initContract(MakerMedianizerAbi, makerMedianizerAddress);
+    let ethToUsd = web3.utils.hexToNumberString(await makerMedianizer.methods.read().call());
+    let totalEthLockedDollar = totalEthLocked * ethToUsd / 1e18;
+    console.log("Total ETH locked in USD:", totalEthLockedDollar);
+    
+    // get total locked in $
+    let totalLockedDollar = totalEthLockedDollar+totalUsdcLocked;
+    console.log("Total USD locked:", totalLockedDollar);
+}
 
 async function getTotalInsuranceCoverageDollar() {
     let ocDaiOld = await initContract(oTokenAbi, ocDaiOldAddress);
@@ -257,9 +293,6 @@ async function getTotalInsuranceCoverageDollar() {
         oCrvInsuranceBoughtDollar
     ]);
 
-    console.log(cDaiToDai);
-    console.log(cUsdcToUsdc);
-
     console.log("ocDaiOld insurance coverage bought in $: ", ocDaiOldInsuranceBoughtDollar);
     console.log("ocDai insurance coverage bought in $: ", ocDaiInsuranceBoughtDollar);
     console.log("ocUsdc insurance coverage bought in $: ", ocUsdcInsuranceBoughtDollar);
@@ -286,9 +319,11 @@ async function runKpi() {
         case 'interacted-addresses':
             getInteractedAddresses(argv.t);
             break;
+        case 'usd-locked':
+            getTotalDollarLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oCrvAddress]);
+            break;
         default:
             await getTotalInsuranceCoverageDollar();
-            //await getEthLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oCrvAddress])  
     }
       
 }
