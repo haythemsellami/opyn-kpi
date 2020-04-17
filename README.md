@@ -41,7 +41,7 @@ To get unique addresses that interacted with a specific oToken (sent or received
 ```bash
 $ node index.js -m interacted-addresses -t oTokenName
 
-# oTokenName: ocrv, old-ocdai, ocdai, ocusdc, oeth-040320-100, oeth-042420-100, oeth-042420-150
+# oTokenName: ocrv, old-ocdai, ocdai, ocusdc, oeth-040320-100, oeth-042420-100, oeth-042420-150, oeth-050120-160
 ```
 e.g:
 ```
