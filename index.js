@@ -23,6 +23,8 @@ const oEth040320Address = "0x48AB8A7d3Bf2EB942e153e4275Ae1a8988238dC7";
 const oEth042420Address = "0x6C79F10543C7886c6946B8A996F824E474bAC8f2";
 const oEth042420150Address = "0xaefc7b368f7b536c9e5e3f342bf534931ce58584";
 const oEth050120160Address = "0x461Cd647aDd2159E85aD57141cB5371566fCeeD3";
+const oEth052920150Address = "0xECf6F2fD8D2A8E17397066348d449566d5407174";
+const oEth052920250CallAddress = "0xbcAE1dB14f1b366cd4611C75Aab2031492b136e9"
 
 const oCrvAddress = "0x4ba8c6ce0e855c051e65dfc37883360efaf7c82b";
 
@@ -35,6 +37,7 @@ const oEth040320ExchangeAddress = "0x30651Fc7F912f5E40AB22F3D34C2159431Fb1c4F";
 const oEth042420ExchangeAddress = "0x5734a78b1985B47dF3fbf1736c278F57c2C30983";
 const oEth042420150ExchangeAddress = "0xD2840757B0DeF8fBC2A7DC990CEF75975C2d3F0e";
 const oEth050120160ExchangeAddress = "0xd03f7298aE74a8618711Ec43F45Ad2225F141aa4"
+const oEth052920150ExchangeAddress = "0x75B865EA22a2b6633038E15647357268C7F9Ac54";
 
 const oCrvExchangeAddress = "0x21f5E9D4Ec20571402A5396084B1634314A68c97";
 const curvefiSwapAddress = "0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51";
@@ -122,6 +125,28 @@ async function getInteractedAddresses(t) {
             token.push(await initContract(oTokenAbi, oEth050120160Address));
             tokenUniswapExchange.push(oEth050120160ExchangeAddress);
             break;
+        case 'oeth-052920-150':
+            token.push(await initContract(oTokenAbi, oEth052920150Address));
+            tokenUniswapExchange.push(oEth052920150ExchangeAddress);
+            break;
+        case 'call-oeth-052920-250':
+            token.push(await initContract(oTokenAbi, oEth052920250CallAddress));
+            tokenUniswapExchange.push(null);
+            break;
+        case 'oeth':
+            token.push(await initContract(oTokenAbi, oEth040320Address));
+            tokenUniswapExchange.push(oEth040320ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth042420Address));
+            tokenUniswapExchange.push(oEth042420ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth042420150Address));
+            tokenUniswapExchange.push(oEth042420150ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth050120160Address));
+            tokenUniswapExchange.push(oEth050120160ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth052920150Address));
+            tokenUniswapExchange.push(oEth052920150ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth052920250CallAddress));
+            tokenUniswapExchange.push(null);
+            break;
         default:
             token.push(await initContract(oTokenAbi, ocDaiOldAddress));
             tokenUniswapExchange.push(ocDaiOldExchangeAddress);
@@ -139,6 +164,10 @@ async function getInteractedAddresses(t) {
             tokenUniswapExchange.push(oEth042420150ExchangeAddress);
             token.push(await initContract(oTokenAbi, oEth050120160Address));
             tokenUniswapExchange.push(oEth050120160ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth052920150Address));
+            tokenUniswapExchange.push(oEth052920150ExchangeAddress);
+            token.push(await initContract(oTokenAbi, oEth052920250CallAddress));
+            tokenUniswapExchange.push(null);
     }
 
     let addresses = [];
@@ -254,6 +283,8 @@ async function getTotalInsuranceCoverageDollar() {
     let oEth042420150 = await initContract(oTokenAbi, oEth042420150Address);
     // oEth 05/01/2020 160$ token
     let oEth050120160 = await initContract(oTokenAbi, oEth050120160Address);
+    // oEth 05/29/2020 150$ token
+    let oEth052920150 = await initContract(oTokenAbi, oEth052920150Address);
     // oCrv token
     let oCrv = await initContract(oTokenAbi, oCrvAddress);
     // cDai token
@@ -314,6 +345,13 @@ async function getTotalInsuranceCoverageDollar() {
     let oEth050120160Balance1 = await getBalance(oEth050120160, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oEth050120160Decimals;
     let oEth050120160Balance2 = await getBalance(oEth050120160, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oEth050120160Decimals;
 
+    // oEth 05/29/20 150$ balances
+    let oEth052920150Decimals = await getDecimals(oEth052920150);
+    let oEth052920150TotalSupply = await getTotalSupply(oEth052920150) / 10**oEth052920150Decimals;
+    let oEth052920150UniswapBalance = await getBalance(oEth052920150, oEth052920150ExchangeAddress) / 10**oEth052920150Decimals;
+    let oEth052920150Balance1 = await getBalance(oEth052920150, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oEth052920150Decimals;
+    let oEth052920150Balance2 = await getBalance(oEth052920150, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oEth052920150Decimals;
+
     // oCrv balances
     let oCrvDecimals = await getDecimals(oCrv);
     let ocCrvTotalSupply = await getTotalSupply(oCrv) / 10**oCrvDecimals;
@@ -327,6 +365,7 @@ async function getTotalInsuranceCoverageDollar() {
     let ocDaiBought = calculateInsuranceBought(ocDaiTotalSupply, ocDaiUniswapBalance, ocDaiBalance1, ocDaiBalance2);
     // ocUsdc total bought
     let ocUsdcBought = calculateInsuranceBought(ocUsdcTotalSupply, ocUsdcUniswapBalance, ocUsdcBalance1, ocUsdcBalance2);
+
     // oEth 04/03/2020 100$ total bought
     let oEth040320Bought = calculateInsuranceBought(oEth040320TotalSupply, oEth040320UniswapBalance, oEth040320Balance1, oEth040320Balance2);
     // oEth 04/24/20 100$ total bought
@@ -335,6 +374,9 @@ async function getTotalInsuranceCoverageDollar() {
     let oEth042420150Bought = calculateInsuranceBought(oEth042420150TotalSupply, oEth042420150UniswapBalance, oEth042420150Balance1, oEth042420150Balance2);
     // oEth 05/01/20 160$ total bought
     let oEth050120160Bought = calculateInsuranceBought(oEth050120160TotalSupply, oEth050120160UniswapBalance, oEth050120160Balance1, oEth050120160Balance2);
+    // oEth 05/29/20 150$ total bought
+    let oEth052920150Bought = calculateInsuranceBought(oEth052920150TotalSupply, oEth052920150UniswapBalance, oEth052920150Balance1, oEth052920150Balance2);
+
     // oCrv total bought
     let oCrvBought = calculateInsuranceBought(ocCrvTotalSupply, oCrvUniswapBalance, oCrvBalance1, oCrvBalance2);
 
@@ -361,6 +403,8 @@ async function getTotalInsuranceCoverageDollar() {
     let oEth042420150InsuranceBoughtDollar = oEth042420150Bought * ethToUsd / 1e18;
     // total oEth 05/01/20 160$ bought in $
     let oEth050120160InsuranceBoughtDollar = oEth050120160Bought * ethToUsd / 1e18;
+    // total oEth 05/29/20 150$ bought in $
+    let oEth052920150InsuranceBoughtDollar = oEth052920150Bought * ethToUsd / 1e18;
     // total oCrv bought in $
     let oCrvInsuranceBoughtDollar = oCrvBought * yTokenToUsd;
 
@@ -373,6 +417,7 @@ async function getTotalInsuranceCoverageDollar() {
         oEth042420InsuranceBoughtDollar,
         oEth042420150InsuranceBoughtDollar,
         oEth050120160InsuranceBoughtDollar,
+        oEth052920150InsuranceBoughtDollar,
         oCrvInsuranceBoughtDollar
     ]);
 
@@ -383,6 +428,7 @@ async function getTotalInsuranceCoverageDollar() {
     console.log("oEth042420 100$ insurance coverage bought in $: ", oEth042420InsuranceBoughtDollar);
     console.log("oEth042420 150$ insurance coverage bought in $: ", oEth042420150InsuranceBoughtDollar);
     console.log("oEth050120 160$ insurance coverage bought in $: ", oEth050120160InsuranceBoughtDollar);
+    console.log("oEth052920 150$ insurance coverage bought in $: ", oEth052920150InsuranceBoughtDollar);
     console.log("oCrv insurance coverage bought in $: ", oCrvInsuranceBoughtDollar);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
 }
@@ -396,16 +442,16 @@ async function runKpi() {
             getTotalInsuranceCoverageDollar();
             break;
         case 'eth-locked':
-            getEthLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oEth042420150Address, oEth050120160Address, oCrvAddress])  
+            getEthLocked([oCrvAddress, ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oEth042420150Address, oEth050120160Address, oEth052920150Address, oEth052920250CallAddress])  
             break;
         case 'token-locked':
-            getTokenLocked(argv.t, [ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oEth042420150Address, oEth050120160Address, oCrvAddress]);
+            getTokenLocked(argv.t, [oCrvAddress, ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oEth042420150Address, oEth050120160Address, oEth052920150Address, oEth052920250CallAddress]);
             break;
         case 'interacted-addresses':
             getInteractedAddresses(argv.t);
             break;
         case 'usd-locked':
-            getTotalDollarLocked([ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oEth042420150Address, oEth050120160Address, oCrvAddress]);
+            getTotalDollarLocked([oCrvAddress, ocDaiOldAddress, ocDaiAddress, ocUsdcAddress, oEth040320Address, oEth042420Address, oEth042420150Address, oEth050120160Address, oEth052920150Address, oEth052920250CallAddress]);
             break;
         default:
             await getTotalInsuranceCoverageDollar();
