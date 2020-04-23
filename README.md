@@ -1,5 +1,18 @@
 # Opyn KPI
 
+## oTokens
+
+- old-ocdai
+- ocdai
+- ocusdc
+- ocrv
+- oeth-040320-100
+- oeth-042420-100
+- oeth-042420-150
+- oeth-050120-160
+- oeth-052920-150
+- call-oeth-052920-250
+
 ## How To Run
 
 Install dependencies:
@@ -47,16 +60,3 @@ e.g:
 ```
 $ node index.js -m interacted-addresses -t oeth-042420-100
 ```
-
-## oTokens
-
-- old-ocdai
-- ocdai
-- ocusdc
-- ocrv
-- oeth-040320-100
-- oeth-042420-100
-- oeth-042420-150
-- oeth-050120-160
-- oeth-052920-150
-- call-oeth-052920-250
