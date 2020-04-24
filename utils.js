@@ -29,6 +29,11 @@ exports.getMakerEthUsd = async (maker) => {
     return web3.utils.hexToNumberString(await maker.methods.read().call());
 }
 
+// get address ETH balance
+exports.getEthBalance = async(address) => {
+    return web3.utils.fromWei(await web3.eth.getBalance(address), "ether");
+}
+
 // Import ABIs
 exports.oTokenAbi = require('./ABI/oToken.json');
 exports.cDaiAbi = require('./ABI/cDai.json');
