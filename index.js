@@ -10,7 +10,7 @@ var argv = require('minimist')(process.argv.slice(2));
 async function runKpi() {
     switch(argv.m) {
         case 'insurance-coverage':
-            getTotalInsuranceCoverageDollar();
+            getTotalInsuranceCoverageDollar.run();
             break;
         case 'eth-locked':
             getTLV.getEthLocked(
