@@ -3,6 +3,7 @@ const registry = require('./registry');
 const getTotalInsuranceCoverageDollar = require('./getTotalInsuranceCoverageDollar');
 const getInteractedAddresses = require('./getInteractedAddresses');
 const getTLV = require('./getTLV');
+const getPastTVL = require('./getPastTVL');
 
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -66,6 +67,9 @@ async function runKpi() {
                     registry.oEth052920250CallAddress
                 ]
             )
+            break;
+        case 'history':
+            getPastTVL.run(argv.d);
             break;
         default:
             await getTotalInsuranceCoverageDollar.run();
