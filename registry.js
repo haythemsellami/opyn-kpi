@@ -11,7 +11,7 @@ module.exports = {
     oEth050120160Address : "0x461Cd647aDd2159E85aD57141cB5371566fCeeD3",
     oEth052920150Address : "0xECf6F2fD8D2A8E17397066348d449566d5407174",
     oEth050820160Address : "0xc8f95e13eff0165e5e381ea1878c56d93562d7d7",
-    oEth052920250CallAddress : "0xbcAE1dB14f1b366cd4611C75Aab2031492b136e9",
+    oEth052920250CallAddress : "0xbcae1db14f1b366cd4611c75aab2031492b136e9",
 
     oCrvAddress : "0x4ba8c6ce0e855c051e65dfc37883360efaf7c82b",
 
