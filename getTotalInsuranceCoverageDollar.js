@@ -16,7 +16,18 @@ calculateInsuranceInDollar = (oTokensInsurance) => {
     return InsuranceBoughtDollar;
 }
 
+
 exports.run = async () => {
+    // cDai token
+    let cDai = await Utils.initContract(Utils.cDaiAbi, Registry.cDaiAddress);
+    // cUsdc token
+    let cUsdc = await Utils.initContract(Utils.cUsdcAbi, Registry.cUsdcAddress);
+    // Maker Medianizer contract (ETH/USD oracle)
+    let makerMedianizer = await Utils.initContract(Utils.MakerMedianizerAbi, Registry.makerMedianizerAddress);
+    // curvefi contract (ytoken exchange rate)
+    let curvefiSwap = await Utils.initContract(Utils.CurvefiSwapAbi, Registry.curvefiSwapAddress);
+    // oCrv token
+    let oCrv = await Utils.initContract(Utils.oTokenAbi, Registry.oCrvAddress);
     // ocDai token (old)
     let ocDaiOld = await Utils.initContract(Utils.oTokenAbi, Registry.ocDaiOldAddress);
     // ocDai token
@@ -35,17 +46,9 @@ exports.run = async () => {
     let oEth052920150 = await Utils.initContract(Utils.oTokenAbi, Registry.oEth052920150Address);
     // oEth 05/08/2020 160$ token
     let oEth050820160 = await Utils.initContract(Utils.oTokenAbi, Registry.oEth050820160Address);
-    // oCrv token
-    let oCrv = await Utils.initContract(Utils.oTokenAbi, Registry.oCrvAddress);
-    // cDai token
-    let cDai = await Utils.initContract(Utils.cDaiAbi, Registry.cDaiAddress);
-    // cUsdc token
-    let cUsdc = await Utils.initContract(Utils.cUsdcAbi, Registry.cUsdcAddress);
-    // Maker Medianizer contract (ETH/USD oracle)
-    let makerMedianizer = await Utils.initContract(Utils.MakerMedianizerAbi, Registry.makerMedianizerAddress);
-    // curvefi contract (ytoken exchange rate)
-    let curvefiSwap = await Utils.initContract(Utils.CurvefiSwapAbi, Registry.curvefiSwapAddress);
-
+    // oEth 05/29/2020 250$ Call token
+    let oEth052920250Call = await Utils.initContract(Utils.oTokenAbi, Registry.oEth052920250CallAddress);
+    
     // ocDai (old) balances
     let ocDaiOldDecimals = await Utils.getDecimals(ocDaiOld);
     let ocDaiOldTotalSupply = await Utils.getTotalSupply(ocDaiOld) / 10**ocDaiOldDecimals;
@@ -66,6 +69,13 @@ exports.run = async () => {
     let ocUsdcUniswapBalance = await Utils.getBalance(ocUsdc, Registry.ocUsdcExchangeAddress) / 10**ocUsdcDecimals;
     let ocUsdcBalance1 = await Utils.getBalance(ocUsdc, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**ocUsdcDecimals;
     let ocUsdcBalance2 = await Utils.getBalance(ocUsdc, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**ocUsdcDecimals;
+
+    // oCrv balances
+    let oCrvDecimals = await Utils.getDecimals(oCrv);
+    let ocCrvTotalSupply = await Utils.getTotalSupply(oCrv) / 10**oCrvDecimals;
+    let oCrvUniswapBalance = await Utils.getBalance(oCrv, Registry.oCrvExchangeAddress) / 10**oCrvDecimals;
+    let oCrvBalance1 = await Utils.getBalance(oCrv, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oCrvDecimals;
+    let oCrvBalance2 = await Utils.getBalance(oCrv, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oCrvDecimals;    
 
     // oEth 04/03/2020 100$ balances
     let oEth040320Decimals = await Utils.getDecimals(oEth040320);
@@ -109,12 +119,12 @@ exports.run = async () => {
     let oEth052920150Balance1 = await Utils.getBalance(oEth052920150, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oEth052920150Decimals;
     let oEth052920150Balance2 = await Utils.getBalance(oEth052920150, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oEth052920150Decimals;
 
-    // oCrv balances
-    let oCrvDecimals = await Utils.getDecimals(oCrv);
-    let ocCrvTotalSupply = await Utils.getTotalSupply(oCrv) / 10**oCrvDecimals;
-    let oCrvUniswapBalance = await Utils.getBalance(oCrv, Registry.oCrvExchangeAddress) / 10**oCrvDecimals;
-    let oCrvBalance1 = await Utils.getBalance(oCrv, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oCrvDecimals;
-    let oCrvBalance2 = await Utils.getBalance(oCrv, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oCrvDecimals;
+    // oEth 05/29/20 250$ Call balances
+    let oEth052920250CallDecimals = await Utils.getDecimals(oEth052920250Call);
+    let oEth052920250CallTotalSupply = await Utils.getTotalSupply(oEth052920250Call) / 10**oEth052920250CallDecimals;
+    let oEth052920250CallUniswapBalance = await Utils.getBalance(oEth052920250Call, Registry.oEth052920250CallExchangeAddress) / 10**oEth052920250CallDecimals;
+    let oEth052920250CallBalance1 = await Utils.getBalance(oEth052920250Call, "0x9e68B67660c223B3E0634D851F5DF821E0E17D84") / 10**oEth052920250CallDecimals;
+    let oEth052920250CallBalance2 = await Utils.getBalance(oEth052920250Call, "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4") / 10**oEth052920250CallDecimals;    
 
     // ocDai (old) total bought
     let ocDaiOldBought = calculateInsuranceBought(ocDaiOldTotalSupply, ocDaiOldUniswapBalance, ocDaiOldBalance1, ocDaiOldBalance2);
@@ -122,6 +132,8 @@ exports.run = async () => {
     let ocDaiBought = calculateInsuranceBought(ocDaiTotalSupply, ocDaiUniswapBalance, ocDaiBalance1, ocDaiBalance2);
     // ocUsdc total bought
     let ocUsdcBought = calculateInsuranceBought(ocUsdcTotalSupply, ocUsdcUniswapBalance, ocUsdcBalance1, ocUsdcBalance2);
+    // oCrv total bought
+    let oCrvBought = calculateInsuranceBought(ocCrvTotalSupply, oCrvUniswapBalance, oCrvBalance1, oCrvBalance2);
 
     // oEth 04/03/2020 100$ total bought
     let oEth040320Bought = calculateInsuranceBought(oEth040320TotalSupply, oEth040320UniswapBalance, oEth040320Balance1, oEth040320Balance2);
@@ -135,9 +147,8 @@ exports.run = async () => {
     let oEth050820160Bought = calculateInsuranceBought(oEth050820160TotalSupply, oEth050820160UniswapBalance, oEth050820160Balance1, oEth050820160Balance2);
     // oEth 05/29/20 150$ total bought
     let oEth052920150Bought = calculateInsuranceBought(oEth052920150TotalSupply, oEth052920150UniswapBalance, oEth052920150Balance1, oEth052920150Balance2);
-
-    // oCrv total bought
-    let oCrvBought = calculateInsuranceBought(ocCrvTotalSupply, oCrvUniswapBalance, oCrvBalance1, oCrvBalance2);
+    // oEth 05/29/20 250$ Call total bought
+    let oEth052920250CallBought = calculateInsuranceBought(oEth052920250CallTotalSupply, oEth052920250CallUniswapBalance, oEth052920250CallBalance1, oEth052920250CallBalance2);
 
     // cDai to Dai exchange rate
     let cDaiToDai = await cDai.methods.exchangeRateStored().call() / 1e28;
@@ -154,6 +165,8 @@ exports.run = async () => {
     let ocDaiInsuranceBoughtDollar = ocDaiBought  * cDaiToDai;
     // total ocUsdc bought in $
     let ocUsdcInsuranceBoughtDollar = ocUsdcBought * cUsdcToUsdc;
+    // total oCrv bought in $
+    let oCrvInsuranceBoughtDollar = oCrvBought * yTokenToUsd;
     // total oEth 04/03/2020 100$ bought in $
     let oEth040320InsuranceBoughtDollar = oEth040320Bought * ethToUsd / 1e18;
     // total oEth 04/24/20 100$ bought in $
@@ -166,8 +179,8 @@ exports.run = async () => {
     let oEth050820160InsuranceBoughtDollar = oEth050820160Bought * ethToUsd / 1e18;
     // total oEth 05/29/20 150$ bought in $
     let oEth052920150InsuranceBoughtDollar = oEth052920150Bought * ethToUsd / 1e18;
-    // total oCrv bought in $
-    let oCrvInsuranceBoughtDollar = oCrvBought * yTokenToUsd;
+    // total oEth 05/29/20 250$ Call bought in $
+    let oEth052920250CallInsuranceBoughtDollar = (oEth052920250CallBought * ethToUsd / 1e18) / 250;
 
     // total oTokens bought in dollar
     let oTokensInsuranceBoughtDollar = calculateInsuranceInDollar([
@@ -180,6 +193,7 @@ exports.run = async () => {
         oEth050120160InsuranceBoughtDollar,
         oEth050820160InsuranceBoughtDollar,
         oEth052920150InsuranceBoughtDollar,
+        oEth052920250CallInsuranceBoughtDollar,
         oCrvInsuranceBoughtDollar
     ]);
 
@@ -192,6 +206,7 @@ exports.run = async () => {
     console.log("oEth050120 160$ insurance coverage bought in $: ", oEth050120160InsuranceBoughtDollar);
     console.log("oEth050820 160$ insurance coverage bought in $: ", oEth050820160InsuranceBoughtDollar);
     console.log("oEth052920 150$ insurance coverage bought in $: ", oEth052920150InsuranceBoughtDollar);
+    console.log("oEth052920 250$ Call insurance coverage bought in $: ", oEth052920250CallInsuranceBoughtDollar);
     console.log("oCrv insurance coverage bought in $: ", oCrvInsuranceBoughtDollar);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
 }
