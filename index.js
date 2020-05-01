@@ -26,7 +26,9 @@ async function runKpi() {
                     registry.oEth050120160Address,
                     registry.oEth050820160Address,
                     registry.oEth052920150Address,
-                    registry.oEth052920250CallAddress
+                    registry.oEth052920250CallAddress,
+                    registry.oEth050820200Address,
+                    registry.oEth051520200Address
                 ]
             )  
             break;
@@ -44,7 +46,9 @@ async function runKpi() {
                     registry.oEth050120160Address,
                     registry.oEth050820160Address,
                     registry.oEth052920150Address,
-                    registry.oEth052920250CallAddress
+                    registry.oEth052920250CallAddress,
+                    registry.oEth050820200Address,
+                    registry.oEth051520200Address
                 ]
             )
             break;
@@ -64,7 +68,9 @@ async function runKpi() {
                     registry.oEth050120160Address,
                     registry.oEth050820160Address,
                     registry.oEth052920150Address,
-                    registry.oEth052920250CallAddress
+                    registry.oEth052920250CallAddress,
+                    registry.oEth050820200Address,
+                    registry.oEth051520200Address
                 ]
             )
             break;

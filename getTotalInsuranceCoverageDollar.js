@@ -191,6 +191,20 @@ exports.run = async () => {
         "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4",
         250
     );
+    // total oEth 05/08/20 200$ bought in $
+    let oEth050820200InsuranceBoughtDollar = await getoEthPutInsuranceDollar(
+        Registry.oEth050820200Address,
+        Registry.oEth050820200ExchangeAddress,
+        "0x9e68B67660c223B3E0634D851F5DF821E0E17D84",
+        "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4"
+    );
+    // total oEth 05/15/20 200$ bought in $
+    let oEth051520200InsuranceBoughtDollar = await getoEthPutInsuranceDollar(
+        Registry.oEth051520200Address,
+        Registry.oEth051520200ExchangeAddress,
+        "0x9e68B67660c223B3E0634D851F5DF821E0E17D84",
+        "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4"
+    );
 
     // total oTokens bought in dollar
     let oTokensInsuranceBoughtDollar = calculateInsuranceInDollar([
@@ -203,6 +217,8 @@ exports.run = async () => {
         oEth050120160InsuranceBoughtDollar,
         oEth050820160InsuranceBoughtDollar,
         oEth052920150InsuranceBoughtDollar,
+        oEth050820200InsuranceBoughtDollar,
+        oEth051520200InsuranceBoughtDollar,
         oEth052920250CallInsuranceBoughtDollar,
         oCrvInsuranceBoughtDollar
     ]);
@@ -216,6 +232,8 @@ exports.run = async () => {
     console.log("oEth050120 160$ insurance coverage bought in $: ", oEth050120160InsuranceBoughtDollar);
     console.log("oEth050820 160$ insurance coverage bought in $: ", oEth050820160InsuranceBoughtDollar);
     console.log("oEth052920 150$ insurance coverage bought in $: ", oEth052920150InsuranceBoughtDollar);
+    console.log("oEth050820 200$ insurance coverage bought in $: ", oEth050820200InsuranceBoughtDollar);
+    console.log("oEth051520 200$ insurance coverage bought in $: ", oEth051520200InsuranceBoughtDollar);
     console.log("oEth052920 250$ Call insurance coverage bought in $: ", oEth052920250CallInsuranceBoughtDollar);
     console.log("oCrv insurance coverage bought in $: ", oCrvInsuranceBoughtDollar);
     console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
