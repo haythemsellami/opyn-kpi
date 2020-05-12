@@ -43,6 +43,9 @@ async function runKpi() {
     }
 
     switch(argv.m) {
+        case 'eth-locked':
+            getTLV.getEthLocked(oTokens.concat(oethTokens))  
+            break;
         case 'interacted-addresses':
             getInteractedAddresses.run(oTokens.concat(oethTokens));
             break;

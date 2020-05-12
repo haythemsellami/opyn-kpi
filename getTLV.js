@@ -3,14 +3,18 @@ const Utils = require('./utils');
 const Registry = require('./registry');
 
 // get ETH locked in protocol
-exports.getEthLocked = async(oTokensAddresses) => {
+exports.getEthLocked = async(otokens) => {
     let totalEthLocked = 0;
 
-    for(let i=0; i<oTokensAddresses.length; i++) {
-        totalEthLocked += Number(await Utils.getEthBalance(oTokensAddresses[i]));
+    for(let i=0; i<otokens.length; i++) {
+        let otokenName = await otokens[i].methods.name().call(); // oToken name
+        let ethLocked = Number(await Utils.getEthBalance(otokens[i]._address));
+        totalEthLocked += ethLocked;
+
+        console.log(otokenName, ":", ethLocked, "ETH")
     }
 
-    console.log("ETH locked: ", totalEthLocked, "ETH");
+    console.log("Total ETH locked: ", totalEthLocked, "ETH");
 
     return totalEthLocked;
 }
