@@ -41,3 +41,6 @@ exports.cUsdcAbi = require('./ABI/cUsdc.json');
 exports.MakerMedianizerAbi = require('./ABI/MakerMedianizer.json');
 exports.CurvefiSwapAbi = require('./ABI/CurvefiSwap.json');
 exports.OptionsExchangeAbi = require('./ABI/OptionsExchange.json');
+exports.OptionsFactoryAbi = require('./ABI/OptionsFactory.json');
+exports.OptionsContractAbi = require('./ABI/OptionsContract.json')
+exports.UniswapFactoryAbi = require('./ABI/UniswapFactory.json')
