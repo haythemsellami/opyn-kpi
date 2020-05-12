@@ -46,6 +46,12 @@ async function runKpi() {
         case 'eth-locked':
             getTLV.getEthLocked(oTokens.concat(oethTokens))  
             break;
+        case 'token-locked':
+            getTLV.getTokenLocked(
+                argv.t, 
+                oTokens.concat(oethTokens)
+            )
+            break;
         case 'interacted-addresses':
             getInteractedAddresses.run(oTokens.concat(oethTokens));
             break;
@@ -56,48 +62,6 @@ async function runKpi() {
     /*switch(argv.m) {
         case 'insurance-coverage':
             getTotalInsuranceCoverageDollar.run();
-            break;
-        case 'eth-locked':
-            getTLV.getEthLocked(
-                [
-                    registry.oCrvAddress,
-                    registry.ocDaiOldAddress,
-                    registry.ocDaiAddress,
-                    registry.ocUsdcAddress,
-                    registry.oEth040320Address,
-                    registry.oEth042420Address,
-                    registry.oEth042420150Address,
-                    registry.oEth050120160Address,
-                    registry.oEth050820160Address,
-                    registry.oEth052920150Address,
-                    registry.oEth052920250CallAddress,
-                    registry.oEth050820200Address,
-                    registry.oEth051520200Address
-                ]
-            )  
-            break;
-        case 'token-locked':
-            getTLV.getTokenLocked(
-                argv.t, 
-                [
-                    registry.oCrvAddress,
-                    registry.ocDaiOldAddress,
-                    registry.ocDaiAddress,
-                    registry.ocUsdcAddress,
-                    registry.oEth040320Address,
-                    registry.oEth042420Address,
-                    registry.oEth042420150Address,
-                    registry.oEth050120160Address,
-                    registry.oEth050820160Address,
-                    registry.oEth052920150Address,
-                    registry.oEth052920250CallAddress,
-                    registry.oEth050820200Address,
-                    registry.oEth051520200Address
-                ]
-            )
-            break;
-        case 'interacted-addresses':
-            getInteractedAddresses.run(argv.t);
             break;
         case 'usd-locked':
             getTLV.getTotalDollarLocked(
