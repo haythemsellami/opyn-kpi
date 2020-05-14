@@ -47,13 +47,16 @@ async function runKpi() {
             getTotalInsuranceCoverageDollar.run(oTokens.concat(oethTokens));
             break;
         case 'eth-locked':
-            getTLV.getEthLocked(oTokens.concat(oethTokens))  
+            getTLV.getEthLocked(oTokens.concat(oethTokens));
             break;
         case 'token-locked':
             getTLV.getTokenLocked(
                 argv.t, 
                 oTokens.concat(oethTokens)
             )
+            break;
+        case 'usd-locked':
+            getTLV.getTotalDollarLocked(oTokens.concat(oethTokens));
             break;
         case 'interacted-addresses':
             getInteractedAddresses.run(oTokens.concat(oethTokens));
@@ -67,37 +70,8 @@ async function runKpi() {
             ])
             break;
         default:
-            console.log('default')
-    }
-
-    /*switch(argv.m) {
-        case 'insurance-coverage':
-            getTotalInsuranceCoverageDollar.run();
-            break;
-        case 'usd-locked':
-            getTLV.getTotalDollarLocked(
-                [
-                    registry.oCrvAddress,
-                    registry.ocDaiOldAddress,
-                    registry.ocDaiAddress,
-                    registry.ocUsdcAddress,
-                    registry.oEth040320Address,
-                    registry.oEth042420Address,
-                    registry.oEth042420150Address,
-                    registry.oEth050120160Address,
-                    registry.oEth050820160Address,
-                    registry.oEth052920150Address,
-                    registry.oEth052920250CallAddress,
-                    registry.oEth050820200Address,
-                    registry.oEth051520200Address
-                ]
-            )
-            break;
-        
-        default:
-            await getTotalInsuranceCoverageDollar.run();
-    }*/
-      
+            await getTotalInsuranceCoverageDollar.run(oTokens.concat(oethTokens));
+    }      
 }
 
 runKpi();

@@ -8,6 +8,12 @@ exports.getEthLocked = async(otokens) => {
 
     for(let i=0; i<otokens.length; i++) {
         let otokenName = await otokens[i].methods.name().call(); // oToken name
+
+        // ignore oToken without name
+        if(utils.toHex(otokenName) == 0x0) {
+            continue;
+        }
+        
         let ethLocked = Number(await utils.getEthBalance(otokens[i]._address));
         totalEthLocked += ethLocked;
 
@@ -41,6 +47,12 @@ exports.getTokenLocked = async (t, otokens) => {
 
     for(let i=0; i<otokens.length; i++) {
         let otokenName = await otokens[i].methods.name().call(); // oToken name
+
+        // ignore oToken without name
+        if(utils.toHex(otokenName) == 0x0) {
+            continue;
+        }
+        
         let amountLocked = await token.methods.balanceOf(otokens[i]._address).call() / 10**decimals; // amount locked
         totalAmountLocked += amountLocked;  // total locked
 
@@ -59,12 +71,13 @@ exports.getTotalDollarLocked = async (oTokensAddresses) => {
     let makerMedianizer = await utils.initContract(utils.MakerMedianizerAbi, registry.makerMedianizerAddress);
     let ethToUsd = await utils.getMakerEthUsd(makerMedianizer);
     let totalEthLockedDollar = totalEthLocked * ethToUsd / 1e18;
-    console.log("ETH locked in USD:", totalEthLockedDollar);
+    console.log("Total ETH locked in USD:", totalEthLockedDollar);
 
     // get USDC locked
     let totalUsdcLocked = await exports.getTokenLocked('usdc', oTokensAddresses);
     
     // get total locked in $
     let totalLockedDollar = totalEthLockedDollar+totalUsdcLocked;
+    
     console.log("Total USD locked:", totalLockedDollar);
 }
