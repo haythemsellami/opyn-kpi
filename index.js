@@ -43,6 +43,9 @@ async function runKpi() {
     }
 
     switch(argv.m) {
+        case 'insurance-coverage':
+            getTotalInsuranceCoverageDollar.run(oTokens.concat(oethTokens));
+            break;
         case 'eth-locked':
             getTLV.getEthLocked(oTokens.concat(oethTokens))  
             break;
@@ -54,6 +57,14 @@ async function runKpi() {
             break;
         case 'interacted-addresses':
             getInteractedAddresses.run(oTokens.concat(oethTokens));
+            break;
+        case 'history':
+            getPastTVL.run(argv.d);
+            break;
+        case '0x-data':
+            get0x.run([
+                registry.oEth052920250CallAddress
+            ])
             break;
         default:
             console.log('default')
@@ -82,14 +93,7 @@ async function runKpi() {
                 ]
             )
             break;
-        case 'history':
-            getPastTVL.run(argv.d);
-            break;
-        case '0x-data':
-            get0x.run([
-                registry.oEth052920250CallAddress
-            ])
-            break;
+        
         default:
             await getTotalInsuranceCoverageDollar.run();
     }*/

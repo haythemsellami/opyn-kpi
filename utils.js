@@ -25,6 +25,7 @@ exports.getDecimals = async (token) => {
     return await token.methods.decimals().call();
 }
 
+// get ETH/USD price
 exports.getMakerEthUsd = async (maker) => {
     return web3.utils.hexToNumberString(await maker.methods.read().call());
 }
@@ -32,6 +33,10 @@ exports.getMakerEthUsd = async (maker) => {
 // get address ETH balance
 exports.getEthBalance = async(address) => {
     return web3.utils.fromWei(await web3.eth.getBalance(address), "ether");
+}
+
+exports.toHex = (string) => {
+    return web3.utils.toHex(string);
 }
 
 // Import ABIs

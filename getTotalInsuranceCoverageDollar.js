@@ -2,6 +2,8 @@
 const Utils = require('./utils');
 const Registry = require('./registry');
 
+const ADDRESS_ZERO = 0x0000000000000000000000000000000000000000;
+
 // calculate oToken bought
 calculateInsuranceBought = (totalSupply, uniswapBalance, balance1, balance2) => {
     return totalSupply - uniswapBalance - balance1 - balance2;
@@ -76,43 +78,87 @@ getoCrvInsuranceDollar = async (oCrvAdd, oCrvExchangeAdd, add1, add2) => {
     return oCrvBought * yTokenToUsd;
 }
 
-getoEthPutInsuranceDollar = async (oEthAdd, oEthExchangeAdd, add1, add2) => {
-    let oEth = await Utils.initContract(Utils.oTokenAbi, oEthAdd);
-
-    let oEthDecimals = await Utils.getDecimals(oEth);
-    let oEthTotalSupply = await Utils.getTotalSupply(oEth) / 10**oEthDecimals;
-    let oEthUniswapBalance = await Utils.getBalance(oEth, oEthExchangeAdd) / 10**oEthDecimals;
-    let oEthBalance1 = await Utils.getBalance(oEth, add1) / 10**oEthDecimals;
-    let oEthBalance2 = await Utils.getBalance(oEth, add2) / 10**oEthDecimals;
+getoEthPutInsuranceDollar = async (oEth, name, decimals, oEthExchangeAdd, add1, add2, ethToUsd) => {
+    let oEthTotalSupply = await Utils.getTotalSupply(oEth) / 10**decimals;
+    let oEthUniswapBalance = await Utils.getBalance(oEth, oEthExchangeAdd) / 10**decimals;
+    let oEthBalance1 = await Utils.getBalance(oEth, add1) / 10**decimals;
+    let oEthBalance2 = await Utils.getBalance(oEth, add2) / 10**decimals;
 
     let oEthBought = calculateInsuranceBought(oEthTotalSupply, oEthUniswapBalance, oEthBalance1, oEthBalance2);
+    let insuranceBoughtDollar = (oEthBought * ethToUsd / 1e18);
 
-    // Maker Medianizer contract (ETH/USD oracle)
-    let makerMedianizer = await Utils.initContract(Utils.MakerMedianizerAbi, Registry.makerMedianizerAddress);
-    let ethToUsd = await Utils.getMakerEthUsd(makerMedianizer);
+    console.log(name, "insurance coverage bought in $: ", insuranceBoughtDollar);
 
-    return oEthBought * ethToUsd / 1e18;
+    return insuranceBoughtDollar;
 }
 
-getoEthCallInsuranceDollar = async (oEthAdd, oEthExchangeAdd, add1, add2, oEthToEth) => {
-    let oEth = await Utils.initContract(Utils.oTokenAbi, oEthAdd);
+getoEthCallInsuranceDollar = async (oEth, name, decimals, oEthExchangeAdd, add1, add2, ethToUsd, otokenStrikePrice) => {
+    let oEthTotalSupply = await Utils.getTotalSupply(oEth) / 10**decimals;
+    let oEthUniswapBalance = await Utils.getBalance(oEth, oEthExchangeAdd) / 10**decimals;
+    let oEthBalance1 = await Utils.getBalance(oEth, add1) / 10**decimals;
+    let oEthBalance2 = await Utils.getBalance(oEth, add2) / 10**decimals;
 
-    let oEthDecimals = await Utils.getDecimals(oEth);
-    let oEthTotalSupply = await Utils.getTotalSupply(oEth) / 10**oEthDecimals;
-    let oEthUniswapBalance = await Utils.getBalance(oEth, oEthExchangeAdd) / 10**oEthDecimals;
-    let oEthBalance1 = await Utils.getBalance(oEth, add1) / 10**oEthDecimals;
-    let oEthBalance2 = await Utils.getBalance(oEth, add2) / 10**oEthDecimals;
+    let oethToEth = 1 / (otokenStrikePrice.value * 10**otokenStrikePrice.exponent);
 
     let oEthBought = calculateInsuranceBought(oEthTotalSupply, oEthUniswapBalance, oEthBalance1, oEthBalance2);
+    let insuranceBoughtDollar = (oEthBought * ethToUsd / 1e18) / oethToEth;
 
-    // Maker Medianizer contract (ETH/USD oracle)
-    let makerMedianizer = await Utils.initContract(Utils.MakerMedianizerAbi, Registry.makerMedianizerAddress);
-    let ethToUsd = await Utils.getMakerEthUsd(makerMedianizer);
+    console.log(name, "insurance coverage bought in $: ", insuranceBoughtDollar);
 
-    return (oEthBought * ethToUsd / 1e18) / oEthToEth;
+    return insuranceBoughtDollar;
 }
 
-exports.run = async () => {
+exports.run = async (otokens) => {
+    let uniswapFactoryInstance = await Utils.initContract(Utils.UniswapFactoryAbi, Registry.uniswapFactory);    // uniswap factory
+    // Maker Medianizer contract (ETH/USD oracle)
+    let makerMedianizerInstance = await Utils.initContract(Utils.MakerMedianizerAbi, Registry.makerMedianizerAddress);
+    let ethToUsd = await Utils.getMakerEthUsd(makerMedianizerInstance);
+    
+
+    let oTokensInsuranceBoughtDollar = [];
+
+    for(let i=0; i<otokens.length; i++) {
+        let otokenName = await otokens[i].methods.name().call();    // oToken name
+
+        // ignore oToken without name
+        if(Utils.toHex(otokenName) == 0x0) {
+            continue;
+        }
+
+        let otokenDecimals = await otokens[i].methods.decimals().call();    // oToken decimals
+        let otokenUnderlyingAdd = await otokens[i].methods.underlying().call();    // oToken underlying token address
+        let otokenStrikeAdd = await otokens[i].methods.strike().call();    // oToken strike token address
+        let otokenStrikePrice = await otokens[i].methods.strikePrice().call();  // oToken strike price
+        let otokenUniswapExchangeAdd = await uniswapFactoryInstance.methods.getExchange(otokens[i]._address).call(); // oToken uniswap exchange address
+
+        /*if(otokenUnderlyingAdd == ADDRESS_ZERO) {
+            oTokensInsuranceBoughtDollar.push(
+                await getoEthPutInsuranceDollar(
+                    otokens[i],
+                    otokenName,
+                    otokenDecimals,
+                    otokenUniswapExchangeAdd, 
+                    "0x9e68B67660c223B3E0634D851F5DF821E0E17D84",
+                    "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4",
+                    ethToUsd
+                )
+            );
+        }*/
+
+        if((otokenStrikeAdd == ADDRESS_ZERO) && (otokenUnderlyingAdd == Registry.usdcAddress)) {
+            getoEthCallInsuranceDollar(
+                otokens[i],
+                otokenName,
+                otokenDecimals,
+                otokenUniswapExchangeAdd, 
+                "0x9e68B67660c223B3E0634D851F5DF821E0E17D84",
+                "0x076C95c6cd2eb823aCC6347FdF5B3dd9b83511E4",
+                ethToUsd,
+                otokenStrikePrice
+            );
+        }
+    }
+    /*
     // total ocDai (old) bought in $
     let ocDaiOldInsuranceBoughtDollar = await getoCdaiInsuranceDollar(
         Registry.ocDaiOldAddress,
@@ -235,6 +281,7 @@ exports.run = async () => {
     console.log("oEth050820 200$ insurance coverage bought in $: ", oEth050820200InsuranceBoughtDollar);
     console.log("oEth051520 200$ insurance coverage bought in $: ", oEth051520200InsuranceBoughtDollar);
     console.log("oEth052920 250$ Call insurance coverage bought in $: ", oEth052920250CallInsuranceBoughtDollar);
-    console.log("oCrv insurance coverage bought in $: ", oCrvInsuranceBoughtDollar);
-    console.log("Total oToken insurance bought in $: ", oTokensInsuranceBoughtDollar);
+    console.log("oCrv insurance coverage bought in $: ", oCrvInsuranceBoughtDollar);*/
+    console.log("Total oToken insurance bought in $: ", calculateInsuranceInDollar(oTokensInsuranceBoughtDollar));
+
 }

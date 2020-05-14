@@ -47,7 +47,7 @@ module.exports = {
     cDaiAddress : "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
     cUsdcAddress : "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
     daiAddress : "0x6b175474e89094c44da98b954eedeac495271d0f",
-    usdcAddress : "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    usdcAddress : "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 
     // utils
     makerMedianizerAddress : "0xE3774Af455602C5a0EACC1b0f93e3cE0f65236ce",
