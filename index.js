@@ -66,7 +66,7 @@ async function runKpi() {
             break;
         case '0x-data':
             get0x.run([
-                registry.oEth052920250CallAddress
+                argv.t
             ])
             break;
         default:
