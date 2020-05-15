@@ -25,6 +25,7 @@ exports.getDecimals = async (token) => {
     return await token.methods.decimals().call();
 }
 
+// get ETH/USD price
 exports.getMakerEthUsd = async (maker) => {
     return web3.utils.hexToNumberString(await maker.methods.read().call());
 }
@@ -34,6 +35,10 @@ exports.getEthBalance = async(address) => {
     return web3.utils.fromWei(await web3.eth.getBalance(address), "ether");
 }
 
+exports.toHex = (string) => {
+    return web3.utils.toHex(string);
+}
+
 // Import ABIs
 exports.oTokenAbi = require('./ABI/oToken.json');
 exports.cDaiAbi = require('./ABI/cDai.json');
@@ -41,3 +46,6 @@ exports.cUsdcAbi = require('./ABI/cUsdc.json');
 exports.MakerMedianizerAbi = require('./ABI/MakerMedianizer.json');
 exports.CurvefiSwapAbi = require('./ABI/CurvefiSwap.json');
 exports.OptionsExchangeAbi = require('./ABI/OptionsExchange.json');
+exports.OptionsFactoryAbi = require('./ABI/OptionsFactory.json');
+exports.OptionsContractAbi = require('./ABI/OptionsContract.json')
+exports.UniswapFactoryAbi = require('./ABI/UniswapFactory.json')
