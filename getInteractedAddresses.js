@@ -11,6 +11,12 @@ exports.run = async (tokens) => {
     for(let j=0; j<tokens.length; j++) {
         let addresses = []; // interacted addresses for each oToken
         let otokenName = await tokens[j].methods.name().call(); // oToken name
+
+        // ignore oToken without name
+        if(utils.toHex(otokenName) == 0x0) {
+            continue;
+        }
+        
         let tokenUniswapExchange = await uniswapFactoryInstance.methods.getExchange(tokens[j]._address).call(); // oToken uniswap exchange address
 
         // get all past Transfer events
