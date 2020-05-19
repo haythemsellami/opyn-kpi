@@ -6,7 +6,7 @@ const registry = require('./registry');
 // to get the number of addresses => addresses.length
 exports.run = async (tokens) => {
     let uniswapFactoryInstance = await utils.initContract(utils.UniswapFactoryAbi, registry.uniswapFactory);  // uniswap factory
-    let totalInteractions = 0;
+    let totalAddresses = [];
 
     for(let j=0; j<tokens.length; j++) {
         let addresses = []; // interacted addresses for each oToken
@@ -33,6 +33,8 @@ exports.run = async (tokens) => {
                 && (!addresses.includes(transferEvent[i].returnValues.from))
             ) {
                 addresses.push(transferEvent[i].returnValues.from);
+
+                if(!totalAddresses.includes(transferEvent[i].returnValues.from)) totalAddresses.push(transferEvent[i].returnValues.from);
             }
     
             if(
@@ -41,13 +43,13 @@ exports.run = async (tokens) => {
                 && (!addresses.includes(transferEvent[i].returnValues.to))
             ) {
                 addresses.push(transferEvent[i].returnValues.to);
+
+                if(!totalAddresses.includes(transferEvent[i].returnValues.to)) totalAddresses.push(transferEvent[i].returnValues.to);
             }
         }
-
-        totalInteractions += addresses.length;
 
         console.log(otokenName, ":", addresses.length, "address")
     }
 
-    console.log("Total: ", totalInteractions);
+    console.log("Total: ", totalAddresses.length);
 }
