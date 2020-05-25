@@ -17,6 +17,6 @@ module.exports = {
     usdcAddress : "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 
     // utils
-    makerMedianizerAddress : "0xE3774Af455602C5a0EACC1b0f93e3cE0f65236ce",
+    makerMedianizerAddress : "0x729D19f657BD0614b4985Cf1D82531c67569197B",
     optionsExchangeAddress : "0x5778f2824a114F6115dc74d432685d3336216017",
 }

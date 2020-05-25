@@ -100,7 +100,6 @@ exports.run = async (otokens) => {
     const yTokenToUsd = await curvefiSwapInstance.methods.get_virtual_price().call() / 1e18;
     // ETH/USD price
     const ethToUsd = await utils.getMakerEthUsd(makerMedianizerInstance);
-    
 
     let oTokensInsuranceBoughtDollar = [];
 
