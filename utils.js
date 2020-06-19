@@ -2,7 +2,7 @@
 const Web3 = require('web3');
 
 // connect to Infura
-const rpcUrl = "https://mainnet.infura.io/v3/d70106f59aef456c9e5bfbb0c2cc7164";
+const rpcUrl = "https://mainnet.infura.io/v3/dda00ce84ed2407981030b691bb32e37";
 const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
 
 // init contract object
