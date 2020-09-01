@@ -30,8 +30,8 @@ exports.run = async (tokens) => {
             continue;
         }
 
-        let tokenUniswapExchange = await uniswapFactoryInstance.methods.getExchange(tokens[j]._address).call(); // oToken uniswap exchange address
-
+        let tokenUniswapExchangeAdd = await uniswapFactoryInstance.methods.getExchange(tokens[j]._address).call(); // oToken uniswap exchange address
+        let uniswapExchange = await utils.initContract(utils.UniswapExchangeAbi, tokenUniswapExchangeAdd);  // uniswap exchange for the otoken
 
         if (otokenUnderlyingAdd == ADDRESS_ZERO) {
 
@@ -46,20 +46,16 @@ exports.run = async (tokens) => {
             // loop through events & remove deplicated one + mint events
             for (let i = 0; i < transferEvent.length; i++) {
 
-
-
-                if (transferEvent[i].returnValues.to == tokenUniswapExchange) {
+                if (transferEvent[i].returnValues.to == tokenUniswapExchangeAdd) {
 
                     let timestamp = await utils.getDateFromBlock(transferEvent[i].blockNumber)
 
                     let date = new Date(timestamp * 1000).toDateString()
 
-                    
-
                     tokensSold.push({ date: date, value: transferEvent[i].returnValues.value})
                 }
 
-                if (transferEvent[i].returnValues.from == tokenUniswapExchange) {
+                if (transferEvent[i].returnValues.from == tokenUniswapExchangeAdd) {
 
                     let timestamp = await utils.getDateFromBlock(transferEvent[i].blockNumber)
 
@@ -69,7 +65,7 @@ exports.run = async (tokens) => {
                 }
 
                 if (
-                    (transferEvent[i].returnValues.from != tokenUniswapExchange)
+                    (transferEvent[i].returnValues.from != tokenUniswapExchangeAdd)
                     && (transferEvent[i].returnValues.from != "0x0000000000000000000000000000000000000000")
                 ) {
 
@@ -79,7 +75,7 @@ exports.run = async (tokens) => {
                 }
 
                 if (
-                    (transferEvent[i].returnValues.to != tokenUniswapExchange)
+                    (transferEvent[i].returnValues.to != tokenUniswapExchangeAdd)
                     && (transferEvent[i].returnValues.to != "0x0000000000000000000000000000000000000000")
                 ) {
 

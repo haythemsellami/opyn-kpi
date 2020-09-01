@@ -57,3 +57,4 @@ exports.OptionsExchangeAbi = require('./ABI/OptionsExchange.json');
 exports.OptionsFactoryAbi = require('./ABI/OptionsFactory.json');
 exports.OptionsContractAbi = require('./ABI/OptionsContract.json')
 exports.UniswapFactoryAbi = require('./ABI/UniswapFactory.json')
+exports.UniswapExchangeAbi = require('./ABI/UniswapExchange.json')
