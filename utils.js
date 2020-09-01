@@ -2,7 +2,7 @@
 const Web3 = require('web3');
 
 // connect to Infura
-const rpcUrl = "https://mainnet.infura.io/v3/d70106f59aef456c9e5bfbb0c2cc7164";
+const rpcUrl = "https://mainnet.infura.io/v3/750947ab31924df089f69ec5619428e4";
 const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
 
 // init contract object
@@ -38,6 +38,14 @@ exports.getEthBalance = async(address) => {
 exports.toHex = (string) => {
     return web3.utils.toHex(string);
 }
+
+
+// get date from block
+exports.getDateFromBlock = async (blockNumber) => {
+    let block = await web3.eth.getBlock(blockNumber)
+    return block.timestamp
+}
+
 
 // Import ABIs
 exports.oTokenAbi = require('./ABI/oToken.json');
