@@ -5,6 +5,8 @@ const Web3 = require('web3');
 const rpcUrl = "https://mainnet.infura.io/v3/750947ab31924df089f69ec5619428e4";
 const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
 
+
+
 // init contract object
 exports.initContract = async (abi, address) => {
     return new web3.eth.Contract(abi, address);

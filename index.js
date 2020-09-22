@@ -6,7 +6,7 @@ const registry = require('./registry');
 
 const getTotalInsuranceCoverageDollar = require('./getTotalInsuranceCoverageDollar');
 const getInteractedAddresses = require('./getInteractedAddresses');
-const volumesByDay = require('./getVolumesByDay');
+const getInteractedAddressesWithUniswap = require('./getInteractedAddressesWithUniswap');
 const getTLV = require('./getTLV');
 const getPastTVL = require('./getPastTVL');
 const get0x = require('./get0xData');
@@ -62,9 +62,9 @@ async function runKpi() {
         case 'interacted-addresses':
             getInteractedAddresses.run(oTokens.concat(oethTokens));
             break;
-        // case 'volumes-by-day':
-        //     volumesByDay.run(oTokens.concat(oethTokens));
-        //     break;
+        case 'interacted-addresses-with-uniswap':
+            getInteractedAddressesWithUniswap.run(oTokens.concat(oethTokens));
+            break;
         case 'history':
             getPastTVL.run(argv.d);
             break;
