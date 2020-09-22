@@ -62,9 +62,9 @@ async function runKpi() {
         case 'interacted-addresses':
             getInteractedAddresses.run(oTokens.concat(oethTokens));
             break;
-        case 'volumes-by-day':
-            volumesByDay.run(oTokens.concat(oethTokens));
-            break;
+        // case 'volumes-by-day':
+        //     volumesByDay.run(oTokens.concat(oethTokens));
+        //     break;
         case 'history':
             getPastTVL.run(argv.d);
             break;
