@@ -4,12 +4,8 @@ const utils = require('./utils');
 
 const registry = require('./registry');
 
-const getTotalInsuranceCoverageDollar = require('./getTotalInsuranceCoverageDollar');
-const getInteractedAddresses = require('./getInteractedAddresses');
+
 const getInteractedAddressesWithUniswap = require('./getInteractedAddressesWithUniswap');
-const getTLV = require('./getTLV');
-const getPastTVL = require('./getPastTVL');
-const get0x = require('./get0xData');
 
 // run
 async function runKpi() {
@@ -44,37 +40,11 @@ async function runKpi() {
     }
 
     switch(argv.m) {
-        case 'insurance-coverage':
-            getTotalInsuranceCoverageDollar.run(oTokens.concat(oethTokens));
-            break;
-        case 'eth-locked':
-            getTLV.getEthLocked(oTokens.concat(oethTokens));
-            break;
-        case 'token-locked':
-            getTLV.getTokenLocked(
-                argv.t, 
-                oTokens.concat(oethTokens)
-            )
-            break;
-        case 'usd-locked':
-            getTLV.getTotalDollarLocked(oTokens.concat(oethTokens));
-            break;
-        case 'interacted-addresses':
-            getInteractedAddresses.run(oTokens.concat(oethTokens));
-            break;
         case 'interacted-addresses-with-uniswap':
             getInteractedAddressesWithUniswap.run(oTokens.concat(oethTokens));
             break;
-        case 'history':
-            getPastTVL.run(argv.d);
-            break;
-        case '0x-data':
-            get0x.run([
-                argv.t
-            ])
-            break;
         default:
-            await getTotalInsuranceCoverageDollar.run(oTokens.concat(oethTokens));
+            await getInteractedAddressesWithUniswap.run(oTokens.concat(oethTokens));
     }      
 }
 

@@ -70,7 +70,7 @@ exports.run = async (tokens) => {
         }
     });
 
-    console.dir("list of Opyn addresses without Uni Airdrop", opynAddressesWithoutAirdrop, { 'maxArrayLength': null });
+    console.dir(opynAddressesWithoutAirdrop, { 'maxArrayLength': null });
 
     console.log("total Opyn addresses without Uni Airdrop", opynAddressesWithoutAirdrop.length)
 
